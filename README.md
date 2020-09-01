@@ -41,7 +41,14 @@ English Redundancy Checker & Word Synonym Searcher
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+~~Distributed under the MIT License. See `LICENSE` for more information.~~
+
+I'm not sure how to control multiple licenses in one project
+
+PyQt5 : GNU General Public License version 3.0
+
+NLTK : Apache 2.0 License.
+
 
 Although I don't use word data commercially, I won't use the data of [thesaurus](https://www.thesaurus.com/) if any copyright issues occur
 
