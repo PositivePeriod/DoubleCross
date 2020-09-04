@@ -278,7 +278,7 @@ class WindowClass(QMainWindow, form_class):
         path, extension = QFileDialog.getSaveFileName(self, 'Save File', '', "Text Files(*.txt)")
         if path != '':
             try:
-                with open(path, 'w') as f:
+                with open(path, 'w', encoding='UTF-8') as f:
                     f.write(self.text.toPlainText())
             except Exception as e:
                 print('Error Handle - save |', type(e).__name__, e)
@@ -308,7 +308,8 @@ class WindowClass(QMainWindow, form_class):
             event.ignore()
 
     def how_to_use(self):
-        webbrowser.open('https://www.youtube.com/watch?v=02-ZA7bfBIg')
+        link = 'https://www.youtube.com/watch?v=02-ZA7bfBIg'
+        webbrowser.open(link)
 
     def about(self):
         about = f'''DoubleCross {__version__}

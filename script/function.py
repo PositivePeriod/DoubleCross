@@ -60,7 +60,7 @@ def text_format(bg, fg, style=''):
 
 
 def open_file():
-    path, extension = QFileDialog.getOpenFileName(QWidget(), 'Open File', os.path.expanduser('~/Desktop'),
+    path, extension = QFileDialog.getOpenFileName(QWidget(), 'Load File', os.path.expanduser('~/Desktop'),
                                                   "All Files(*.*);; Word Files(*.docx);; Text Files(*.txt)")
     if path != '':
         if extension == 'Word Files(*.docx)' or path[-5:] == '.docx':
@@ -78,7 +78,7 @@ def open_file():
         return content
 
 
-def get_thesaurus_data(word, printf=False):
+def get_thesaurus_data(word):
     word = word.strip()
     if len(word) == 0:
         return None
@@ -108,45 +108,14 @@ def get_thesaurus_data(word, printf=False):
     sorted_data = {}
 
     # Get data
-    if printf:
-        blacklist = []
-        for x in data:
-            sorted_data[x['definition']] = {'pos': x['pos'], 'synonyms': [], 'antonyms': []}
-            print(f"definition | {x['definition']} / {x['pos']}")
-            print(f"synonyms |", end=" ")
-            for y in sorted(x['synonyms'], key=lambda w: (-int(w['similarity']), w['term'])):
-                if y['isInformal'] == '0' and y['isVulgar'] is None:
-                    print(f"{y['term']} {y['similarity']} /", end=" ")
-                    sorted_data[x['definition']]['synonyms'].append((y['term'], y['similarity']))
-                else:
-                    blacklist.append(y)
-
-            print()
-            print(f"antonyms |", end=" ")
-            for y in sorted(x['antonyms'], key=lambda w: (int(w['similarity']), w['term'])):
-                if y['isInformal'] == '0' and y['isVulgar'] is None:
-                    print(f"{y['term']} {y['similarity']} /", end=" ")
-                    sorted_data[x['definition']]['antonyms'].append((y['term'], y['similarity']))
-                else:
-                    blacklist.append(y)
-
-            print()
-            print()
-
-        print('blacklist')
-        for x in blacklist:
-            print(x)
-        for x in sorted_data.keys():
-            print(x, sorted_data[x])
-    else:
-        for x in data:
-            sorted_data[x['definition']] = {'pos': x['pos'], 'synonyms': [], 'antonyms': []}
-            for y in sorted(x['synonyms'], key=lambda w: (-int(w['similarity']), w['term'])):
-                if y['isInformal'] == '0' and y['isVulgar'] is None:
-                    sorted_data[x['definition']]['synonyms'].append((y['term'], y['similarity']))
-            for y in sorted(x['antonyms'], key=lambda w: (int(w['similarity']), w['term'])):
-                if y['isInformal'] == '0' and y['isVulgar'] is None:
-                    sorted_data[x['definition']]['antonyms'].append((y['term'], y['similarity']))
+    for x in data:
+        sorted_data[x['definition']] = {'pos': x['pos'], 'synonyms': [], 'antonyms': []}
+        for y in sorted(x['synonyms'], key=lambda w: (-int(w['similarity']), w['term'])):
+            if y['isInformal'] == '0' and y['isVulgar'] is None:
+                sorted_data[x['definition']]['synonyms'].append((y['term'], y['similarity']))
+        for y in sorted(x['antonyms'], key=lambda w: (int(w['similarity']), w['term'])):
+            if y['isInformal'] == '0' and y['isVulgar'] is None:
+                sorted_data[x['definition']]['antonyms'].append((y['term'], y['similarity']))
     return [True, sorted_data]
 
 
