@@ -3,7 +3,7 @@ import script.function as function
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QBrush, QPen
-from PyQt5.QtWidgets import QWidget, QTabWidget, QLabel, QVBoxLayout, QAbstractItemView, QTableWidgetItem, QTableWidget, QTextEdit, QMessageBox
+from PyQt5.QtWidgets import QWidget, QTabWidget, QLabel, QVBoxLayout, QAbstractItemView, QTableWidgetItem, QTableWidget, QTextEdit
 
 
 class StatusWidget(QWidget):
@@ -31,41 +31,35 @@ class WordWidget(QTableWidget):
     def __init__(self, parent=None):
         QTableWidget.__init__(self, parent)
 
+        self.setRowCount(1)
         self.setColumnCount(2)
         header = self.horizontalHeader()
 
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
         self.setHorizontalHeaderLabels(('Term', 'Count'))
-
-        # self.verticalHeader().setVisible(False)
-
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.resizeRowsToContents()
 
         self.data = []
-        # TODO resize 시 한 줄에 두 개씩 보여주는 거
 
     def update_data(self, data):
-        print('update_data in WordWidget |', data)
         self.data = data
-        self.clearContents()
+        self.clear()
 
         self.setRowCount(len(self.data.keys()))
         self.setColumnCount(2)
-
         header = self.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
         self.setHorizontalHeaderLabels(('Term', 'Count'))
-        '''        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.setSelectionBehavior(QAbstractItemView.SelectRows)'''
-        for i, word in enumerate(self.data.keys()):
-            item = QTableWidgetItem(word)
+        temp_data = sorted([(k, len(self.data[k])) for k in self.data.keys()], key=lambda x: x[1], reverse=True)
+        for i, word in enumerate(temp_data):
+            item = QTableWidgetItem(word[0])
             item.setTextAlignment(Qt.AlignCenter)
             self.setItem(i, 0, item)
-            item = QTableWidgetItem(str(len(self.data[word])))
+            item = QTableWidgetItem(str(word[1]))
             item.setTextAlignment(Qt.AlignCenter)
             self.setItem(i, 1, item)
 
@@ -102,9 +96,7 @@ class ExplainTabbedWidget(QWidget):
         self.data_update(option)
 
     def data_update(self, option):
-        print('data_update')
         if option is None:
-            print('exception')
             label = QLabel(self.data)
             label.setAlignment(Qt.AlignCenter)
             vbox = QVBoxLayout()
@@ -120,7 +112,6 @@ class ExplainTabbedWidget(QWidget):
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
         view.verticalHeader().setVisible(False)
-        # view.setShowGrid(False)
         view.setEditTriggers(QAbstractItemView.NoEditTriggers)
         for i, word in enumerate(self.data[option]):
             for j, info in enumerate([word[1], word[0]]):
@@ -147,62 +138,18 @@ class ExplainTabbedWidget(QWidget):
 
     def resizeEvent(self, event):
         QWidget.resizeEvent(self, event)
-        # print(self.size())
 
 
 class TextWidget(QTextEdit):
     def __init__(self, parent=None):
         QTextEdit.__init__(self, parent)
 
-    def dragEnterEvent(self, event):  # TODO
+    def dragEnterEvent(self, event):
         if event.mimeData().hasFormat('text/plain'):
             event.accept()
         else:
             event.ignore()
-        '''
-        mime = event.mimeData()
-        if mime.hasUrls():
-            path = mime.urls()[0].toString()[8:]
-            path = parse.unquote(path)
-            if path[-5:] == '.docx' or path[-4:] == '.txt':
-                event.accept()
-            else:
-                try:
-                    with open(path, 'r') as f:
-                        f.read()
-                    event.accept()
-                except (OSError, UnicodeDecodeError) as e:
-                    print('Error Handle - dragEnter |', type(e).__name__, e)
-                    event.ignore()
-        elif mime.hasText():
-            event.accept()
-        '''
 
-    def dropEvent(self, event):  # TODO
+    def dropEvent(self, event):
         if event.mimeData().hasFormat('text/plain'):
             QTextEdit.dropEvent(self, event)
-        '''
-        mime = event.mimeData()
-        if mime.hasUrls():
-            path = mime.urls()[0].toString()[8:]
-            path = parse.unquote(path)
-            if path[-5:] == '.docx':
-                content = function.get_docx_text(path)
-            elif path[-4:] == '.txt':
-                with open(path, 'r') as f:
-                    content = f.read()
-            else:
-                with open(path, 'r') as f:
-                    content = f.read()
-            if content is not None:
-                reply = QMessageBox.question(self, 'Confirm Load',
-                                             'Are you sure you want to erase current content and load new content?',
-                                             QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-                if reply == QMessageBox.Yes:
-                    # TODO drag and drop -> cursor error
-                    self.text.setText(content)
-                    self.text.textCursor().setPosition(0)
-
-        elif mime.hasText():
-            QTextEdit.dropEvent(self, event)
-        '''

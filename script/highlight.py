@@ -17,12 +17,10 @@ class Highlighter:
     def highlight(self, data):
         if not self.able:
             return None
-        print('highlight')
         cursor = self.text.textCursor()
         cursor.select(QTextCursor.Document)
         cursor.setCharFormat(self.style['normal'])
         cursor.clearSelection()
-        # print('highlight', data)
         for positions in data.values():
             for index, length in positions:
                 cursor.setPosition(index)
@@ -31,14 +29,12 @@ class Highlighter:
                 cursor.clearSelection()
         cursor.setCharFormat(self.style['normal'])
 
-    def focus_change(self, data, word=None, focus=True):  # new test 갱신과 안 겹치게 lock 쓸 필요가 있을 듯
+    def focus_change(self, data, word=None, focus=True):
         if not self.able:
             return None
-        print('focus_change')
         cursor = self.text.textCursor()
         pos = cursor.position()
-        print('Pos | focus_change |', pos)
-        if self.focus_word is not None and self.focus_word in data.keys():  # might not exist valid as key
+        if self.focus_word is not None and self.focus_word in data.keys():
             for index, length in data[self.focus_word]:
                 cursor.setPosition(index)
                 cursor.movePosition(QTextCursor.NextCharacter, mode=QTextCursor.KeepAnchor, n=length)
@@ -59,7 +55,6 @@ class Highlighter:
                         break
                 if flag:
                     break
-        # print(self.focus_word)
         if self.focus_word is not None:
             for index, length in data[self.focus_word]:
                 cursor.setPosition(index)
@@ -71,15 +66,8 @@ class Highlighter:
                 cursor.clearSelection()
         cursor.setCharFormat(self.style['normal'])
 
-    def change_state(self, word):  # TODO
-        if not self.able:
-            print('Change_state |', word)
-            return None
-
     def reset(self):
         cursor = self.text.textCursor()
         cursor.select(QTextCursor.Document)
         cursor.setCharFormat(self.style['normal'])
         cursor.clearSelection()
-
-# https://wiki.python.org/moin/PyQt/Python%20syntax%20highlighting

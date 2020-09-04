@@ -14,9 +14,7 @@ from PyQt5.QtWidgets import QFileDialog, QWidget
 color_list = {'red': QColor.fromRgb(237, 85, 59),
               'yellow': QColor.fromRgb(246, 213, 92),
               'green': QColor.fromRgb(39, 161, 108),
-              'mint': QColor.fromRgb(60, 174, 163),
-              'blue': QColor.fromRgb(32, 99, 155),
-              'deepblue': QColor.fromRgb(23, 63, 95)}
+              'blue': QColor.fromRgb(32, 99, 155)}
 
 for i, hex_string in enumerate(['#ed553b', '#f38e7c', '#f7b3a7', '#fad0c9', '#fde9e5']):
     color_list[f'red{i}'] = QColor(hex_string)
@@ -28,7 +26,6 @@ def color_by_name(color):
     if color in color_list:
         return color_list[color]
     else:
-        # print('color_by_name; QColor')
         return QColor(color)
 
 
@@ -65,7 +62,6 @@ def text_format(bg, fg, style=''):
 def open_file():
     path, extension = QFileDialog.getOpenFileName(QWidget(), 'Open File', os.path.expanduser('~/Desktop'),
                                                   "All Files(*.*);; Word Files(*.docx);; Text Files(*.txt)")
-    print('File approach |', path, type(path), extension)
     if path != '':
         if extension == 'Word Files(*.docx)' or path[-5:] == '.docx':
             content = get_docx_text(path)
@@ -83,12 +79,6 @@ def open_file():
 
 
 def get_thesaurus_data(word, printf=False):
-    # word for test unicode
-    # take for test lots of data
-    # drug for test informal
-    # qpwoeirut for test not word
-    # 'https://www.powerthesaurus.org/job/synonyms'
-    print('Thesaurus_data')
     word = word.strip()
     if len(word) == 0:
         return None
@@ -97,7 +87,6 @@ def get_thesaurus_data(word, printf=False):
     try:
         html = request.urlopen(url).read()
     except error.URLError as e:
-        print(str(e))
         if str(e) == 'HTTP Error 404: Not Found':
             return [False, f'No searched data for {word}']
         elif str(e) == '<urlopen error [Errno 11001] getaddrinfo failed>':
@@ -105,17 +94,17 @@ def get_thesaurus_data(word, printf=False):
         else:
             return [False, f'Unpredictable error\nNo searched data for {word}\nCheck for internet connection']
 
-    # Parsing
-    index1 = html.find(b'"posTabs":[')  # might be change index1 and index2 -> occur error
+    # Parsing; index1 and index2 should be updated
+    index1 = html.find(b'"posTabs":[')
     index2 = html.find(b'}],"synonyms":[', index1)
     if index2 == -1:
         return [False, f'No searched data for {word}']
     json_data = html[index1 + 10:index2 + 2]
     try:
-        data = json.loads(json_data)  # might be change index1 and index2 -> occur error
+        data = json.loads(json_data)
     except Exception as e:
-        print(e)
-        raise e
+        print('Error Handle - get_thesaurus_data', e)
+        return [False, f'Error occurred while searching data for {word}']
     sorted_data = {}
 
     # Get data
