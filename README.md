@@ -80,7 +80,7 @@ Project Link : https://github.com/PositivePeriod/DoubleCross
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[download-link]: https://github.com/PositivePeriod/DoubleCross/releases/download/v1.0/DoubleCross10_distribute.zip
+[download-link]: https://github.com/PositivePeriod/DoubleCross/releases/download/v1.1/DoubleCross11_distribute.zip
 [license-shield]: https://img.shields.io/badge/license-mit-green.svg
 [license-url]: https://github.com/PositivePeriod/DoubleCross/blob/master/LICENSE
 [product-screenshot]: images/screenshot.png
